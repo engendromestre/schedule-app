@@ -1,0 +1,20 @@
+POST http://localhost:3000/users HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "John Joe",
+    "email": "joe@example.com",
+    "password": "123456"
+}
+
+###
+
+PUT http://localhost:3000/users HTTP/1.1
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+{
+    "name": "John Joe",
+    "email": "joe@example.com",
+    "password": "123456"
+}
+
