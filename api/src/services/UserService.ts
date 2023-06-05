@@ -1,8 +1,9 @@
-import { hash } from 'bcrypt'
+import { compare, hash } from 'bcrypt'
 import { ICreate, IUpdate } from '../interfaces/UserInterface'
 import { UserRepository } from '../repositories/UserRepository'
 import { s3 } from '../config/aws'
 import { v4 as uuid } from 'uuid'
+import { sign } from 'jsonwebtoken'
 
 class UserService {
     private userRepository: UserRepository
@@ -29,16 +30,73 @@ class UserService {
         return create
     }
 
-    async update({ name, oldPassword, newPassword, avatar_url }: IUpdate)  {
-        const uploadImg = avatar_url?.buffer
-        const uploadS3 = await s3
-            .upload({
-                Bucket: 'engendro-bucket',
-                Key: `${uuid()}-${avatar_url?.originalname}`,
-                Body: uploadImg,
-            })
-            .promise()
-        console.log('url_img => ', uploadS3.Location)
+    async auth(email: string, password: string) {
+        const findUser = await this.userRepository.findUserByEmail(email)
+        if (!findUser) {
+            // E-mail not found
+            throw new Error('User or password invalid')
+        }
+        const passwordMatch = await compare(password, findUser.password)
+        if (!passwordMatch) {
+            // E-mail not found
+            throw new Error('Password invalid')
+        }
+
+        let secretKey: string | undefined = process.env.ACCESS_KEY_TOKEN
+        if (!secretKey) {
+            throw new Error('There is no token key')
+        }
+        const token = sign({ email }, secretKey, {
+            subject: findUser.id,
+            expiresIn: 60 * 15,
+        })
+
+        return {
+            token,
+            user: {
+                name: findUser.name,
+                email: findUser.email,
+            },
+        }
+    }
+
+    async update({
+        name,
+        oldPassword,
+        newPassword,
+        avatar_url,
+        user_id,
+    }: IUpdate) {
+        const findUser = await this.userRepository.findUserByID(user_id)
+        if (!findUser) {
+            throw new Error('User not found')
+        }
+        let password
+        if (oldPassword && newPassword) {
+            const passwordMatch = compare(oldPassword, findUser.password)
+            if (!passwordMatch) {
+                throw new Error('Password invalid')
+            }
+            password = await hash(newPassword, 10)
+            await this.userRepository.updatePassword(password, user_id)
+        }
+        if (avatar_url) {
+            const uploadImg = avatar_url?.buffer
+            const uploadS3 = await s3
+                .upload({
+                    Bucket: 'engendro-bucket',
+                    Key: `${uuid()}-${avatar_url?.originalname}`,
+                    Body: uploadImg,
+                })
+                .promise()
+            if(!name) {
+                name = findUser.name
+            }
+            await this.userRepository.update(name, uploadS3.Location,user_id)
+        }
+        return {
+            message: 'User updated successfully'
+        }
     }
 }
 

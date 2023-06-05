@@ -57,3 +57,7 @@ Bucket AWS
 - yarn add @types/uuid -D
 
 Autenticação da Rota de Update
+- yarn add jsonwebtoken
+- yarn add @types/jsonwebtoken
+
+https://www.md5hashgenerator.com/ - gerar secret key - 
