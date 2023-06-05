@@ -21,6 +21,20 @@ class UserRepository {
         })
         return result
     }
+
+    async update(name: string, newPassword: string, avatar_url: string) {
+        const result = await prisma.users.update({
+            where: {
+                // ... provide filter here
+            },
+            data: {
+               name,
+               password: newPassword,
+               avatar_url
+            },
+        })
+        return result
+    }
 }
 
 export { UserRepository }

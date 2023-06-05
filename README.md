@@ -44,6 +44,16 @@ diz ao Git quais arquivos ou pastas ele deve ignorar em um projeto.
 - trabalhar com o repository pattern
 - yarn prisma migrate dev - default_avatar_url
 - yarn add bcrypt - criptografar a senha do usuário
-- yarn add @types/bcrypt - tipagens do bcrypt
+- yarn add @types/bcrypt -D - tipagens do bcrypt
 
-https://www.youtube.com/watch?v=250mjcjqRRE&t=842s 58:44
+- multipart/form-data
+- yarn add multer
+- yarn add @types/multer
+
+Bucket AWS
+- yarn add aws-sdk
+- yarn add multer-s3
+- yarn add uuid
+- yarn add @types/uuid -D
+
+Autenticação da Rota de Update
