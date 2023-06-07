@@ -61,3 +61,7 @@ Autenticação da Rota de Update
 - yarn add @types/jsonwebtoken
 
 https://www.md5hashgenerator.com/ - gerar secret key - 
+
+## Schedules
+- yarn add date-fns
+
