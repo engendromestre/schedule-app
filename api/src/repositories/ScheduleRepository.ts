@@ -3,12 +3,14 @@ import { prisma } from '../database/prisma'
 import { ICreate } from '../interfaces/ScheduleInterface'
 
 class ScheduleRepository {
-    async create({ name, phone, date }: ICreate) {
+    async create({ name, phone, date, user_id }: ICreate) {
+        console.log(user_id)
         const result = await prisma.schedule.create({
             data: {
                 name,
                 phone,
                 date,
+                user_id
             },
         })
         return result
@@ -26,9 +28,9 @@ class ScheduleRepository {
         return result
     }
 
-    async find(date: Date) {
+    async find(date: Date, user_id: string) {
         const result = await prisma.schedule.findFirst({
-            where: { date },
+            where: { date, user_id },
         })
         return result
     }

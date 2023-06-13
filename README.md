@@ -65,3 +65,30 @@ https://www.md5hashgenerator.com/ - gerar secret key -
 ## Schedules
 - yarn add date-fns
 
+Como será necessário conectar o front-end com a API é necessário autorizar que ela receba essas conexões. O cors libera conexões de outras portas 
+- yarn add cors
+- yarn add @types/cors -D
+
+Relacionamento User x Schedule
+Schedule
+ - user_id
+ - users
+-> yarn prisma migrate dev 
+
+Refresh Token - quando for utilizar o token no front-end, quando for buscar o token mais atualizado não passar dados de autenticação como e-mail e senha
+
+# FRONT-END
+-> yarn create vite - inicia o projeto com o vite (responsável pela compilação do front-end)
+✔ Project name: … frontend
+✔ Select a framework: › React
+✔ Select a variant: › TypeScript + SWC
+-> cd frontend 
+-> yarn - instala todas as dependências	do projeto
+-> yarn dev - inicializa o ambiente em modo de desenvolvimento
+
+file tsconfig.json
+{
+  "compilerOptions": {
+    "noImplicitAny": false,
+  }
+}

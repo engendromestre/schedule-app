@@ -19,10 +19,17 @@ class UsersRoutes {
             '/',
             this.usersController.store.bind(this.usersController)
         )
+        
         this.router.post(
             '/auth',
             this.usersController.auth.bind(this.usersController)
         )
+
+        this.router.post(
+            '/refresh',
+            this.usersController.refresh.bind(this.usersController)
+        )
+
         this.router.put(
             '/',
             this.authMiddleware.auth.bind(this.authMiddleware),
