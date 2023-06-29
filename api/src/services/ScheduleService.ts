@@ -22,7 +22,10 @@ class ScheduleService {
         if (isBefore(hourStart, new Date())) {
             throw new Error('it is not allowed to schedule old date')
         }
-        const checkIsAvailable = await this.scheduleRepository.find(hourStart, user_id)
+        const checkIsAvailable = await this.scheduleRepository.find(
+            hourStart,
+            user_id
+        )
         if (checkIsAvailable) {
             throw new Error('Schedule date is not available')
         }
@@ -35,7 +38,7 @@ class ScheduleService {
             name,
             phone,
             date: hourStart,
-            user_id
+            user_id,
         })
         return create
     }
@@ -46,11 +49,20 @@ class ScheduleService {
         return result
     }
 
-    async delete() {}
+    async delete(id: string) {
+        const checkExists = await this.scheduleRepository.findById(id)
+
+        if (!checkExists) {
+            throw new Error('Schedule doenst exists')
+        }
+
+        const result = await this.scheduleRepository.delete(id)
+
+        return result
+    }
 
     async index(date: Date) {
         const result = await this.scheduleRepository.findAll(date)
-        console.log(result)
         return result
     }
 }

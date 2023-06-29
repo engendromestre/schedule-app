@@ -35,16 +35,25 @@ class ScheduleController {
     }
     async update(request: Request, response: Response, next: NextFunction) {
         const { id } = request.params
-        const { date } = request.body 
+        const { date } = request.body
         const { user_id } = request // @types
         try {
-             const result = await this.scheduleService.update(id, date, user_id)
-             return response.json(result)
+            const result = await this.scheduleService.update(id, date, user_id)
+            return response.json(result)
         } catch (error) {
-            next(error)   
+            next(error)
         }
     }
-    async delete(request: Request, response: Response, next: NextFunction) {}
+    async delete(request: Request, response: Response, next: NextFunction) {
+        const { id } = request.params
+        try {
+            const result = await this.scheduleService.delete(id)
+
+            return response.json(result)
+        } catch (error) {
+            next(error)
+        }
+    }
 }
 
 export { ScheduleController }

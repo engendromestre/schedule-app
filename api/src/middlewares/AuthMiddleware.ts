@@ -23,6 +23,7 @@ class AuthMiddleware {
                 throw new Error('There is no token key')
             }
             const { sub } = verify(token, secretKey) as IPayload
+            
             request.user_id = sub
             return next()
         } catch (error) {

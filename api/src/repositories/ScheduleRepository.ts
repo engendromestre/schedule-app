@@ -4,13 +4,12 @@ import { ICreate } from '../interfaces/ScheduleInterface'
 
 class ScheduleRepository {
     async create({ name, phone, date, user_id }: ICreate) {
-        console.log(user_id)
         const result = await prisma.schedule.create({
             data: {
                 name,
                 phone,
                 date,
-                user_id
+                user_id,
             },
         })
         return result
@@ -19,10 +18,19 @@ class ScheduleRepository {
     async update(id: string, date: Date) {
         const result = await prisma.schedule.update({
             where: {
-                id
+                id,
             },
             data: {
-                date
+                date,
+            },
+        })
+        return result
+    }
+
+    async delete(id: string) {
+        const result = await prisma.schedule.delete({
+            where: {
+                id,
             },
         })
         return result
@@ -31,6 +39,13 @@ class ScheduleRepository {
     async find(date: Date, user_id: string) {
         const result = await prisma.schedule.findFirst({
             where: { date, user_id },
+        })
+        return result
+    }
+
+    async findById(id: string) {
+        const result = await prisma.schedule.findUnique({
+            where: { id },
         })
         return result
     }
@@ -47,7 +62,6 @@ class ScheduleRepository {
                 date: 'asc',
             },
         })
-        console.log('repo ->', result)
         return result
     }
 }

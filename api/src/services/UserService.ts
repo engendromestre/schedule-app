@@ -30,8 +30,11 @@ class UserService {
         return create
     }
 
-    private validateSecretKey(msg_error: string) {
-        let secretKey: string | undefined = process.env.ACCESS_KEY_TOKEN
+    private validateSecretKey(msg_error: string, keyType: string) {
+        let secretKey: string | undefined =
+            keyType === 'token'
+                ? process.env.ACCESS_KEY_TOKEN
+                : process.env.ACCESS_KEY_TOKEN_REFRESH
         if (!secretKey) {
             throw new Error(msg_error)
         }
@@ -50,13 +53,17 @@ class UserService {
             throw new Error('Password invalid')
         }
 
-        let secretKey = this.validateSecretKey('There is no token key')
+        let secretKey = this.validateSecretKey('There is no token key', 'token')
         const token = sign({ email }, secretKey, {
             subject: findUser.id,
-            expiresIn: 60 * 15,
+            expiresIn: '1d',
         })
 
-        const refreshToken = sign({ email }, secretKey, {
+        let secretKeyRefreshToken = this.validateSecretKey(
+            'There is no token key',
+            'refresh_token'
+        )
+        const refreshToken = sign({ email }, secretKeyRefreshToken, {
             subject: findUser.id,
             expiresIn: '7d',
         })
@@ -76,13 +83,23 @@ class UserService {
             throw new Error('Refresh token missing')
         }
 
-        let secretKey = this.validateSecretKey('There is no refresh token key')
-        const verifyRefreshToken = verify(refresh_token, secretKey)
+        let secretKey = this.validateSecretKey(
+            'There is no refresh token key',
+            'token'
+        )
+        let secretKeyRefresh = this.validateSecretKey(
+            'There is no refresh token key',
+            'refresh_token'
+        )
+        const verifyRefreshToken = verify(refresh_token, secretKeyRefresh)
         const { sub } = verifyRefreshToken
         const newToken = sign({ sub }, secretKey, {
-            expiresIn: 60 * 15,
+            expiresIn: '1h',
         })
-        return { token: newToken }
+        const refreshToken = sign({ sub }, secretKeyRefresh, {
+            expiresIn: '7d',
+        })
+        return { token: newToken, refresh_token: refreshToken }
     }
 
     async update({
